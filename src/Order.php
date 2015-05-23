@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_ClassiPress_Order {
+class Pronamic_WP_Pay_Extensions_ClassiPress_Order {
 	/**
 	 * Check if the order info is about an advertisement
 	 *
@@ -40,6 +40,6 @@ class Pronamic_ClassiPress_Order {
 	 * @return boolean
 	 */
 	public static function is_completed( array $order ) {
-		return isset( $order['payment_status'] ) && Pronamic_ClassiPress_PaymentStatuses::COMPLETED === $order['payment_status'];
+		return isset( $order['payment_status'] ) && Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses::COMPLETED === $order['payment_status'];
 	}
 }

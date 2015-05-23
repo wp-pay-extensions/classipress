@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_ClassiPress_IDeal_AddOn {
+class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	/**
 	 * Slug
 	 *
@@ -154,9 +154,9 @@ class Pronamic_ClassiPress_IDeal_AddOn {
 			if ( $gateway ) {
 				$id = filter_input( INPUT_POST, 'oid', FILTER_SANITIZE_STRING );
 
-				$order = Pronamic_ClassiPress_ClassiPress::get_order_by_id( $id );
+				$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
-				$data = new Pronamic_ClassiPress_IDeal_IDealDataProxy( $order );
+				$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
 
 				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
 
@@ -179,7 +179,7 @@ class Pronamic_ClassiPress_IDeal_AddOn {
 		}
 
 		// Add transaction entry
-		$transaction_id = Pronamic_ClassiPress_ClassiPress::add_transaction_entry( $order_values );
+		$transaction_id = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::add_transaction_entry( $order_values );
 
 		// Handle gateway
 		global $app_abbr;
@@ -189,7 +189,7 @@ class Pronamic_ClassiPress_IDeal_AddOn {
 		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
 
 		if ( $gateway ) {
-			$data = new Pronamic_ClassiPress_IDeal_IDealDataProxy( $order_values );
+			$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order_values );
 
 			if ( $gateway->is_html_form() ) {
 				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
@@ -241,9 +241,9 @@ class Pronamic_ClassiPress_IDeal_AddOn {
 		if ( self::SLUG === $payment->get_source() ) {
 			$id = $payment->get_source_id();
 
-			$order = Pronamic_ClassiPress_ClassiPress::get_order_by_id( $id );
+			$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
-			$data  = new Pronamic_ClassiPress_IDeal_IDealDataProxy( $order );
+			$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
 
 			$url = $data->get_normal_return_url();
 
@@ -258,12 +258,12 @@ class Pronamic_ClassiPress_IDeal_AddOn {
 
 					break;
 				case Pronamic_WP_Pay_Statuses::SUCCESS:
-					if ( ! Pronamic_ClassiPress_Order::is_completed( $order ) ) {
-						Pronamic_ClassiPress_ClassiPress::process_ad_order( $id );
+					if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
+						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_ad_order( $id );
 
-						Pronamic_ClassiPress_ClassiPress::process_membership_order( $order );
+						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_membership_order( $order );
 
-						Pronamic_ClassiPress_ClassiPress::update_payment_status_by_txn_id( $id, Pronamic_ClassiPress_PaymentStatuses::COMPLETED );
+						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::update_payment_status_by_txn_id( $id, Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses::COMPLETED );
 					}
 
 					$url = $data->get_success_url();

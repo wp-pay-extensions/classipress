@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_ClassiPress_PaymentStatuses {
+class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses {
 	/**
 	 * Indiactor for the 'Completed' payment status
 	 *

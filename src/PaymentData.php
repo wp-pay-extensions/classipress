@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_ClassiPress_IDeal_IDealDataProxy extends Pronamic_WP_Pay_PaymentData {
+class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay_PaymentData {
 	/**
 	 * Order values
 	 *
@@ -155,7 +155,7 @@ class Pronamic_ClassiPress_IDeal_IDealDataProxy extends Pronamic_WP_Pay_PaymentD
 			 * We query the order info sometimes directly from the database,
 			 * if we do this the 'notify_url' isn't directly available
 			 */
-			if ( Pronamic_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
+			if ( Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
 				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
 				$url = add_query_arg(
@@ -204,7 +204,7 @@ class Pronamic_ClassiPress_IDeal_IDealDataProxy extends Pronamic_WP_Pay_PaymentD
 			 * ClassiPress is doing in similar check in the following file:
 			 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/gateway.php?at=3.2.1#cl-31
 			 */
-			if ( Pronamic_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
+			if ( Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
 				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
 				$url = add_query_arg(

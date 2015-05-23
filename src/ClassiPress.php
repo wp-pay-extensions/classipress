@@ -8,7 +8,7 @@
  * @author Remco Tolsma
  * @version 1.0
  */
-class Pronamic_ClassiPress_ClassiPress {
+class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 	/**
 	 * Check if ClassiPress is active (Automattic/developer style)
 	 *
