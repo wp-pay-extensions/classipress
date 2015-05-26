@@ -1,7 +1,7 @@
 {
   "name": "classipress",
   "version": "1.0.0",
-  "description": "WP eCommerce driver for the WordPress payment processing library.",
+  "description": "ClassiPress driver for the WordPress payment processing library.",
   "repository": {
     "type": "git",
     "url": "https://github.com/wp-pay-extensions/classipress"
