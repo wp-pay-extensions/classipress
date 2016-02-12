@@ -7,9 +7,13 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 - 
 
+## [1.0.1] - 2016-02-12
+- Removed status code from redirect in update_status.
+
 ## 1.0.0 - 2015-05-26
 
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/classipress/compare/1.0.0...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/classipress/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/wp-pay-extensions/classipress/compare/1.0.0...1.0.1

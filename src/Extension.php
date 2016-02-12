@@ -3,10 +3,12 @@
 /**
  * Title: ClassiPress iDEAL Add-On
  * Description:
- * Copyright: Copyright (c) 2005 - 2015
+ * Copyright: Copyright (c) 2005 - 2016
  * Company: Pronamic
+ *
  * @author Remco Tolsma
- * @version 1.0.0
+ * @version 1.0.1
+ * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	/**
@@ -91,7 +93,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 				'options' => array(
 					'yes' => __( 'Yes', 'pronamic_ideal' ),
 					'no'  => __( 'No', 'pronamic_ideal' ),
-				) ,
+				),
 				'id'      => $app_abbr . '_pronamic_ideal_enable',
 			),
 			// Select Box
@@ -207,7 +209,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 					echo Pronamic_IDeal_IDeal::htmlHiddenFields( array(
 						'cp_payment_method'  => 'pronamic_ideal',
-						'oid'                => $data->get_order_id()
+						'oid'                => $data->get_order_id(),
 					) );
 
 					echo $gateway->get_input_html();
@@ -278,7 +280,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			}
 
 			if ( $can_redirect ) {
-				wp_redirect( $url, 303 );
+				wp_redirect( $url );
 
 				exit;
 			}
@@ -297,7 +299,6 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
-			// get_edit_post_link( $payment->get_source_id() ),
 			add_query_arg( 'page', 'transactions', admin_url( 'admin.php' ) ),
 			sprintf( __( 'Order #%s', 'pronamic_ideal' ), $payment->get_source_id() )
 		);
