@@ -7,7 +7,7 @@
  * Company: Pronamic
  *
  * @author Remco Tolsma
- * @version 1.0.0
+ * @version 1.0.2
  * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay_PaymentData {
@@ -121,21 +121,21 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 		return get_the_author_meta( 'user_email', $user_id );
 	}
 
-	public function getCustomerName() {
+	public function get_customer_name() {
 		$user_id = $this->order_values['user_id'];
 
 		return get_the_author_meta( 'first_name', $user_id ) . ' ' . get_the_author_meta( 'last_name', $user_id );
 	}
 
-	public function getOwnerAddress() {
+	public function get_address() {
 		return $this->order_values['cp_street'];
 	}
 
-	public function getOwnerCity() {
+	public function get_city() {
 		return $this->order_values['cp_city'];
 	}
 
-	public function getOwnerZip() {
+	public function get_zip() {
 		return $this->order_values['cp_zipcode'];
 	}
 
