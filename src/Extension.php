@@ -24,7 +24,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	 * Bootstrap
 	 */
 	public static function bootstrap() {
-		add_action( 'appthemes_init',           array( __CLASS__, 'appthemes_init' ) );
+		add_action( 'appthemes_init', array( __CLASS__, 'appthemes_init' ) );
 
 		/*
 		 * We have to add this action on bootstrap, because we can't
@@ -44,8 +44,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		global $app_theme;
 
 		if ( 'ClassiPress' === $app_theme ) {
-			add_action( 'cp_action_payment_method',     array( __CLASS__, 'payment_method' ) );
-			add_action( 'cp_action_gateway',            array( __CLASS__, 'gateway_process' ) );
+			add_action( 'cp_action_payment_method', array( __CLASS__, 'payment_method' ) );
+			add_action( 'cp_action_gateway', array( __CLASS__, 'gateway_process' ) );
 
 			add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
