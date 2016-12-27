@@ -163,9 +163,9 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
 
-				if ( $gateway->is_http_redirect() ) {
-					$gateway->redirect( $payment );
-				}
+				wp_redirect( $payment->get_pay_redirect_url() );
+
+				exit;
 			}
 		}
 	}
@@ -194,42 +194,34 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		if ( $gateway ) {
 			$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order_values );
 
-			if ( $gateway->is_html_form() ) {
-				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
+			// Hide the checkout page container HTML element
+			echo '<style type="text/css">.thankyou center { display: none; }</style>';
 
-				echo $gateway->get_form_html( $payment, $auto_submit = true );
-			}
+			?>
+			<form class="form_step" method="post" action="">
+				<?php
 
-			if ( $gateway->is_http_redirect() ) {
-				// Hide the checkout page container HTML element
-				echo '<style type="text/css">.thankyou center { display: none; }</style>';
+				echo Pronamic_IDeal_IDeal::htmlHiddenFields( array(
+					'cp_payment_method'  => 'pronamic_ideal',
+					'oid'                => $data->get_order_id(),
+				) );
+
+				echo $gateway->get_input_html();
 
 				?>
-				<form class="form_step" method="post" action="">
+
+				<p class="btn1">
 					<?php
 
-					echo Pronamic_IDeal_IDeal::htmlHiddenFields( array(
-						'cp_payment_method'  => 'pronamic_ideal',
-						'oid'                => $data->get_order_id(),
-					) );
-
-					echo $gateway->get_input_html();
+					printf(
+						'<input class="ideal-button" type="submit" name="classipress_pronamic_ideal" value="%s" />',
+						__( 'Pay with iDEAL', 'pronamic_ideal' )
+					);
 
 					?>
-
-					<p class="btn1">
-						<?php
-
-						printf(
-							'<input class="ideal-button" type="submit" name="classipress_pronamic_ideal" value="%s" />',
-							__( 'Pay with iDEAL', 'pronamic_ideal' )
-						);
-
-						?>
-					</p>
-				</form>
-				<?php
-			}
+				</p>
+			</form>
+			<?php
 		}
 	}
 
