@@ -232,6 +232,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 
 		// now update the expiration date on the ad
 		update_post_meta( $id, 'cp_sys_expire_date', $expire_date );
+
+		return $result;
 	}
 
 	//////////////////////////////////////////////////
