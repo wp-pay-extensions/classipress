@@ -113,15 +113,21 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 	//////////////////////////////////////////////////
 
+	private function get_config_id() {
+		global $app_abbr;
+
+		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
+
+		return $config_id;
+	}
+
 	/**
 	 * Get the config
 	 *
 	 * @return Pronamic_WordPress_IDeal_Configuration
 	 */
 	private function get_gateway() {
-		global $app_abbr;
-
-		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
+		$config_id = $this->get_config_id();
 
 		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
 
@@ -150,6 +156,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		if ( ! filter_has_var( INPUT_POST, 'classipress_pronamic_ideal' ) ) {
 			return;
 		}
+
+		$config_id = $this->get_config_id();
 
 		$gateway = $this->get_gateway();
 
