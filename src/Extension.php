@@ -49,6 +49,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 			add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
+			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( $this, 'redirect_url' ), 10, 2 );
 			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 2 );
 			add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
 			add_filter( 'pronamic_payment_source_description_' . self::SLUG,   array( __CLASS__, 'source_description' ), 10, 2 );
@@ -235,55 +236,87 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	//////////////////////////////////////////////////
 
 	/**
+	 * Payment redirect URL filter.
+	 *
+	 * @since unreleased
+	 * @param string                  $url
+	 * @param Pronamic_WP_Pay_Payment $payment
+	 * @return string
+	 */
+	public function redirect_url( $url, $payment ) {
+		$id = $payment->get_source_id();
+
+		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
+
+		$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
+
+		$url = $data->get_normal_return_url();
+
+		switch ( $payment->status ) {
+			case Pronamic_WP_Pay_Statuses::CANCELLED:
+
+				break;
+			case Pronamic_WP_Pay_Statuses::EXPIRED:
+
+				break;
+			case Pronamic_WP_Pay_Statuses::FAILURE:
+
+				break;
+			case Pronamic_WP_Pay_Statuses::SUCCESS:
+				$url = $data->get_success_url();
+
+				break;
+			case Pronamic_WP_Pay_Statuses::OPEN:
+
+				break;
+			default:
+
+				break;
+		}
+
+		return $url;
+	}
+
+	//////////////////////////////////////////////////
+
+	/**
 	 * Update lead status of the specified payment
 	 *
 	 * @param string $payment
 	 */
 	public static function update_status( Pronamic_Pay_Payment $payment, $can_redirect = false ) {
-		if ( self::SLUG === $payment->get_source() ) {
-			$id = $payment->get_source_id();
+		$id = $payment->get_source_id();
 
-			$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
+		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
-			$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
+		$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
 
-			$url = $data->get_normal_return_url();
+		switch ( $payment->status ) {
+			case Pronamic_WP_Pay_Statuses::CANCELLED:
 
-			switch ( $payment->status ) {
-				case Pronamic_WP_Pay_Statuses::CANCELLED:
+				break;
+			case Pronamic_WP_Pay_Statuses::EXPIRED:
 
-					break;
-				case Pronamic_WP_Pay_Statuses::EXPIRED:
+				break;
+			case Pronamic_WP_Pay_Statuses::FAILURE:
 
-					break;
-				case Pronamic_WP_Pay_Statuses::FAILURE:
+				break;
+			case Pronamic_WP_Pay_Statuses::SUCCESS:
+				if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
+					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_ad_order( $id );
 
-					break;
-				case Pronamic_WP_Pay_Statuses::SUCCESS:
-					if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
-						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_ad_order( $id );
+					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_membership_order( $order );
 
-						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_membership_order( $order );
+					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::update_payment_status_by_txn_id( $id, Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses::COMPLETED );
+				}
 
-						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::update_payment_status_by_txn_id( $id, Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses::COMPLETED );
-					}
+				break;
+			case Pronamic_WP_Pay_Statuses::OPEN:
 
-					$url = $data->get_success_url();
+				break;
+			default:
 
-					break;
-				case Pronamic_WP_Pay_Statuses::OPEN:
-
-					break;
-				default:
-
-					break;
-			}
-
-			if ( $can_redirect ) {
-				wp_redirect( $url );
-
-				exit;
-			}
+				break;
 		}
 	}
 
