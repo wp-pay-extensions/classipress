@@ -49,10 +49,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 			add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
-			$slug = self::SLUG;
-
-			add_action( "pronamic_payment_status_update_$slug", array( __CLASS__, 'update_status' ), 10, 2 );
-			add_filter( "pronamic_payment_source_text_$slug",   array( __CLASS__, 'source_text' ), 10, 2 );
+			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
 		}
 	}
 
