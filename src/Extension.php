@@ -3,11 +3,11 @@
 /**
  * Title: ClassiPress iDEAL Add-On
  * Description:
- * Copyright: Copyright (c) 2005 - 2016
+ * Copyright: Copyright (c) 2005 - 2017
  * Company: Pronamic
  *
  * @author Remco Tolsma
- * @version 1.0.1
+ * @version 1.0.3
  * @since 1.0.0
  */
 class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
@@ -24,7 +24,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	 * Bootstrap
 	 */
 	public static function bootstrap() {
-		add_action( 'appthemes_init',           array( __CLASS__, 'appthemes_init' ) );
+		add_action( 'appthemes_init', array( __CLASS__, 'appthemes_init' ) );
 
 		/*
 		 * We have to add this action on bootstrap, because we can't
@@ -44,15 +44,16 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		global $app_theme;
 
 		if ( 'ClassiPress' === $app_theme ) {
-			add_action( 'cp_action_payment_method',     array( __CLASS__, 'payment_method' ) );
-			add_action( 'cp_action_gateway',            array( __CLASS__, 'gateway_process' ) );
+			add_action( 'cp_action_payment_method', array( __CLASS__, 'payment_method' ) );
+			add_action( 'cp_action_gateway', array( __CLASS__, 'gateway_process' ) );
 
 			add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
-			$slug = self::SLUG;
-
-			add_action( "pronamic_payment_status_update_$slug", array( __CLASS__, 'update_status' ), 10, 2 );
-			add_filter( "pronamic_payment_source_text_$slug",   array( __CLASS__, 'source_text' ), 10, 2 );
+			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( $this, 'redirect_url' ), 10, 2 );
+			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
+			add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_description_' . self::SLUG,   array( __CLASS__, 'source_description' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_url_' . self::SLUG,   array( __CLASS__, 'source_url' ), 10, 2 );
 		}
 	}
 
@@ -112,15 +113,21 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 	//////////////////////////////////////////////////
 
+	private function get_config_id() {
+		global $app_abbr;
+
+		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
+
+		return $config_id;
+	}
+
 	/**
 	 * Get the config
 	 *
 	 * @return Pronamic_WordPress_IDeal_Configuration
 	 */
 	private function get_gateway() {
-		global $app_abbr;
-
-		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
+		$config_id = $this->get_config_id();
 
 		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
 
@@ -146,27 +153,29 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	 * Process gateway
 	 */
 	public static function process_gateway() {
-		if ( filter_has_var( INPUT_POST, 'classipress_pronamic_ideal' ) ) {
-			global $app_abbr;
-
-			$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
-
-			$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
-
-			if ( $gateway ) {
-				$id = filter_input( INPUT_POST, 'oid', FILTER_SANITIZE_STRING );
-
-				$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
-
-				$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
-
-				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
-
-				if ( $gateway->is_http_redirect() ) {
-					$gateway->redirect( $payment );
-				}
-			}
+		if ( ! filter_has_var( INPUT_POST, 'classipress_pronamic_ideal' ) ) {
+			return;
 		}
+
+		$config_id = $this->get_config_id();
+
+		$gateway = $this->get_gateway();
+
+		if ( ! $gateway ) {
+			return;
+		}
+
+		$id = filter_input( INPUT_POST, 'oid', FILTER_SANITIZE_STRING );
+
+		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
+
+		$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
+
+		$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
+
+		wp_redirect( $payment->get_pay_redirect_url() );
+
+		exit;
 	}
 
 	//////////////////////////////////////////////////
@@ -184,52 +193,86 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		$transaction_id = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::add_transaction_entry( $order_values );
 
 		// Handle gateway
-		global $app_abbr;
+		$gateway = $this->get_gateway();
 
-		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
+		if ( ! $gateway ) {
+			return;
+		}
 
-		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+		$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order_values );
 
-		if ( $gateway ) {
-			$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order_values );
+		// Hide the checkout page container HTML element
+		echo '<style type="text/css">.thankyou center { display: none; }</style>';
 
-			if ( $gateway->is_html_form() ) {
-				$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
+		?>
+		<form class="form_step" method="post" action="">
+			<?php
 
-				echo $gateway->get_form_html( $payment, $auto_submit = true );
-			}
+			echo Pronamic_IDeal_IDeal::htmlHiddenFields( array(
+				'cp_payment_method'  => 'pronamic_ideal',
+				'oid'                => $data->get_order_id(),
+			) );
 
-			if ( $gateway->is_http_redirect() ) {
-				// Hide the checkout page container HTML element
-				echo '<style type="text/css">.thankyou center { display: none; }</style>';
+			echo $gateway->get_input_html();
+
+			?>
+
+			<p class="btn1">
+				<?php
+
+				printf(
+					'<input class="ideal-button" type="submit" name="classipress_pronamic_ideal" value="%s" />',
+					__( 'Pay with iDEAL', 'pronamic_ideal' )
+				);
 
 				?>
-				<form class="form_step" method="post" action="">
-					<?php
+			</p>
+		</form>
+		<?php
+	}
 
-					echo Pronamic_IDeal_IDeal::htmlHiddenFields( array(
-						'cp_payment_method'  => 'pronamic_ideal',
-						'oid'                => $data->get_order_id(),
-					) );
+	//////////////////////////////////////////////////
 
-					echo $gateway->get_input_html();
+	/**
+	 * Payment redirect URL filter.
+	 *
+	 * @since unreleased
+	 * @param string                  $url
+	 * @param Pronamic_WP_Pay_Payment $payment
+	 * @return string
+	 */
+	public function redirect_url( $url, $payment ) {
+		$id = $payment->get_source_id();
 
-					?>
+		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
-					<p class="btn1">
-						<?php
+		$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
 
-						printf(
-							'<input class="ideal-button" type="submit" name="classipress_pronamic_ideal" value="%s" />',
-							__( 'Pay with iDEAL', 'pronamic_ideal' )
-						);
+		$url = $data->get_normal_return_url();
 
-						?>
-					</p>
-				</form>
-				<?php
-			}
+		switch ( $payment->status ) {
+			case Pronamic_WP_Pay_Statuses::CANCELLED:
+
+				break;
+			case Pronamic_WP_Pay_Statuses::EXPIRED:
+
+				break;
+			case Pronamic_WP_Pay_Statuses::FAILURE:
+
+				break;
+			case Pronamic_WP_Pay_Statuses::SUCCESS:
+				$url = $data->get_success_url();
+
+				break;
+			case Pronamic_WP_Pay_Statuses::OPEN:
+
+				break;
+			default:
+
+				break;
 		}
+
+		return $url;
 	}
 
 	//////////////////////////////////////////////////
@@ -239,51 +282,37 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	 *
 	 * @param string $payment
 	 */
-	public static function update_status( Pronamic_Pay_Payment $payment, $can_redirect = false ) {
-		if ( self::SLUG === $payment->get_source() ) {
-			$id = $payment->get_source_id();
+	public static function update_status( Pronamic_Pay_Payment $payment ) {
+		$id = $payment->get_source_id();
 
-			$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
+		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
-			$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
+		switch ( $payment->status ) {
+			case Pronamic_WP_Pay_Statuses::CANCELLED:
 
-			$url = $data->get_normal_return_url();
+				break;
+			case Pronamic_WP_Pay_Statuses::EXPIRED:
 
-			switch ( $payment->status ) {
-				case Pronamic_WP_Pay_Statuses::CANCELLED:
+				break;
+			case Pronamic_WP_Pay_Statuses::FAILURE:
 
-					break;
-				case Pronamic_WP_Pay_Statuses::EXPIRED:
+				break;
+			case Pronamic_WP_Pay_Statuses::SUCCESS:
+				if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
+					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_ad_order( $id );
 
-					break;
-				case Pronamic_WP_Pay_Statuses::FAILURE:
+					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_membership_order( $order );
 
-					break;
-				case Pronamic_WP_Pay_Statuses::SUCCESS:
-					if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
-						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_ad_order( $id );
+					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::update_payment_status_by_txn_id( $id, Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses::COMPLETED );
+				}
 
-						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_membership_order( $order );
+				break;
+			case Pronamic_WP_Pay_Statuses::OPEN:
 
-						Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::update_payment_status_by_txn_id( $id, Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses::COMPLETED );
-					}
+				break;
+			default:
 
-					$url = $data->get_success_url();
-
-					break;
-				case Pronamic_WP_Pay_Statuses::OPEN:
-
-					break;
-				default:
-
-					break;
-			}
-
-			if ( $can_redirect ) {
-				wp_redirect( $url );
-
-				exit;
-			}
+				break;
 		}
 	}
 
@@ -304,5 +333,23 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		);
 
 		return $text;
+	}
+
+	/**
+	 * Source description.
+	 */
+	public static function source_description( $description, Pronamic_Pay_Payment $payment ) {
+		$description = __( 'ClassiPress Order', 'pronamic_ideal' );
+
+		return $description;
+	}
+
+	/**
+	 * Source URL.
+	 */
+	public static function source_url( $url, Pronamic_Pay_Payment $payment ) {
+		$url = add_query_arg( 'page', 'transactions', admin_url( 'admin.php' ) );
+
+		return $url;
 	}
 }
