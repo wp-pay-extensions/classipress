@@ -49,7 +49,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 			add_action( 'template_redirect', array( __CLASS__, 'process_gateway' ) );
 
-			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( $this, 'redirect_url' ), 10, 2 );
+			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
 			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
 			add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
 			add_filter( 'pronamic_payment_source_description_' . self::SLUG,   array( __CLASS__, 'source_description' ), 10, 2 );
@@ -241,7 +241,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	 * @param Pronamic_WP_Pay_Payment $payment
 	 * @return string
 	 */
-	public function redirect_url( $url, $payment ) {
+	public static function redirect_url( $url, $payment ) {
 		$id = $payment->get_source_id();
 
 		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
