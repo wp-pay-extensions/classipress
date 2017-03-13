@@ -7,6 +7,9 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 - 
 
+## [1.0.4] - Unreleased
+- Fixed “Fatal error: Uncaught Error: Using $this when not in object context”.
+
 ## [1.0.3] - 2017-01-25
 - Updated dev libraries.
 - Simplified adding hooks.
@@ -25,7 +28,8 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ### Added
 - First release.
 
-[unreleased]: https://github.com/wp-pay-extensions/classipress/compare/1.0.3...HEAD
+[unreleased]: https://github.com/wp-pay-extensions/classipress/compare/1.0.4...HEAD
+[1.0.4]: https://github.com/wp-pay-extensions/classipress/compare/1.0.3...1.0.4
 [1.0.3]: https://github.com/wp-pay-extensions/classipress/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/wp-pay-extensions/classipress/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/wp-pay-extensions/classipress/compare/1.0.0...1.0.1
