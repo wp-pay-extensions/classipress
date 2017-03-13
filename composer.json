@@ -26,13 +26,23 @@
 	"autoload": {
 		"classmap": ["src/"]
 	},
+	"config": {
+		"platform": {
+			"php": "5.3.3"
+		}
+	},
 	"require": {
-		"php": ">=5.2.4",
+		"php": "^5.3",
 		"wp-pay/core": "^1.0.2"
 	},
 	"require-dev": {
-		"satooshi/php-coveralls": "dev-master",
+		"satooshi/php-coveralls": "^1.0",
 		"squizlabs/php_codesniffer": "^2.7",
 		"wp-coding-standards/wpcs": "^0.10.0"
+	},
+	"scripts": {
+		"post-autoload-dump": [
+			"if [[ -d vendor/wp-coding-standards/wpcs ]]; then vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs; fi"
+		]
 	}
 }
