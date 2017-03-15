@@ -7,7 +7,7 @@ This projects adheres to [Semantic Versioning](http://semver.org/) and [Keep a C
 ## [Unreleased][unreleased]
 - 
 
-## [1.0.4] - Unreleased
+## [1.0.4] - 2017-03-15
 - Fixed “Fatal error: Uncaught Error: Using $this when not in object context”.
 
 ## [1.0.3] - 2017-01-25
