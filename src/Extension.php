@@ -1,4 +1,6 @@
 <?php
+use Pronamic\WordPress\Pay\Payments\Payment;
+use Pronamic\WordPress\Pay\Plugin;
 
 /**
  * Title: ClassiPress iDEAL Add-On
@@ -84,7 +86,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			// Logo/Picture
 			array(
 				'type'    => 'logo',
-				'name'    => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/icon-32x32.png', Pronamic_WP_Pay_Plugin::$file ) ),
+				'name'    => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/icon-32x32.png', Plugin::$file ) ),
 				'id'      => '',
 			),
 			// Select Box
@@ -101,7 +103,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			array(
 				'type'    => 'select',
 				'name'    => __( 'iDEAL Configuration', 'pronamic_ideal' ),
-				'options' => Pronamic_WP_Pay_Plugin::get_config_select_options(),
+				'options' => Plugin::get_config_select_options(),
 				'id'      => $app_abbr . '_pronamic_ideal_config_id',
 			),
 			array(
@@ -129,7 +131,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	private function get_gateway() {
 		$config_id = $this->get_config_id();
 
-		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+		$gateway = Plugin::get_gateway( $config_id );
 
 		return $gateway;
 	}
@@ -171,7 +173,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 		$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
 
-		$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
+		$payment = Plugin::start( $config_id, $gateway, $data );
 
 		wp_redirect( $payment->get_pay_redirect_url() );
 
@@ -237,8 +239,10 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	 * Payment redirect URL filter.
 	 *
 	 * @since unreleased
-	 * @param string                  $url
-	 * @param Pronamic_WP_Pay_Payment $payment
+	 *
+	 * @param string  $url
+	 * @param Payment $payment
+	 *
 	 * @return string
 	 */
 	public static function redirect_url( $url, $payment ) {
