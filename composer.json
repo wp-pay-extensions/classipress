@@ -3,7 +3,7 @@
 	"description": "ClassiPress driver for the WordPress payment processing library.",
 	"keywords": ["wordpress", "wp", "pay", "classipress", "extension", "pronamic"],
 	"homepage": "http://www.wp-pay.org/extensions/classipress/",
-	"license": "GPL-3.0+",
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Pronamic",
