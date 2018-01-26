@@ -1,5 +1,7 @@
 <?php
 use Pronamic\WordPress\Pay\Payments\PaymentData;
+use Pronamic\WordPress\Pay\Payments\Item;
+use Pronamic\WordPress\Pay\Payments\Items;
 
 /**
  * Title: ClassiPress iDEAL data proxy
@@ -78,11 +80,11 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends PaymentData {
 	 * Get items
 	 *
 	 * @see Pronamic_Pay_PaymentDataInterface::get_items()
-	 * @return Pronamic_IDeal_Items
+	 * @return Items
 	 */
 	public function get_items() {
 		// Items
-		$items = new Pronamic_IDeal_Items();
+		$items = new Items();
 
 		// Item
 		// We only add one total item, because iDEAL cant work with negative price items (discount)
@@ -93,7 +95,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends PaymentData {
 			$amount = $this->order_values['item_amount'];
 		}
 
-		$item = new Pronamic_IDeal_Item();
+		$item = new Item();
 		$item->setNumber( $this->order_values['item_number'] );
 		$item->setDescription( $this->order_values['item_name'] );
 		$item->setPrice( $amount );

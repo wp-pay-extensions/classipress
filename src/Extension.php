@@ -1,6 +1,8 @@
 <?php
+use Pronamic\WordPress\Pay\Core\Statuses;
 use Pronamic\WordPress\Pay\Payments\Payment;
 use Pronamic\WordPress\Pay\Plugin;
+use Pronamic\WordPress\Pay\Util;
 
 /**
  * Title: ClassiPress iDEAL Add-On
@@ -210,9 +212,9 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		<form class="form_step" method="post" action="">
 			<?php
 
-			echo Pronamic_IDeal_IDeal::htmlHiddenFields( array(
-				'cp_payment_method'  => 'pronamic_ideal',
-				'oid'                => $data->get_order_id(),
+			echo Util::html_hidden_fields( array(
+				'cp_payment_method' => 'pronamic_ideal',
+				'oid'               => $data->get_order_id(),
 			) );
 
 			echo $gateway->get_input_html();
@@ -255,20 +257,20 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		$url = $data->get_normal_return_url();
 
 		switch ( $payment->status ) {
-			case Pronamic_WP_Pay_Statuses::CANCELLED:
+			case Statuses::CANCELLED:
 
 				break;
-			case Pronamic_WP_Pay_Statuses::EXPIRED:
+			case Statuses::EXPIRED:
 
 				break;
-			case Pronamic_WP_Pay_Statuses::FAILURE:
+			case Statuses::FAILURE:
 
 				break;
-			case Pronamic_WP_Pay_Statuses::SUCCESS:
+			case Statuses::SUCCESS:
 				$url = $data->get_success_url();
 
 				break;
-			case Pronamic_WP_Pay_Statuses::OPEN:
+			case Statuses::OPEN:
 
 				break;
 			default:
@@ -292,16 +294,16 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
 		switch ( $payment->status ) {
-			case Pronamic_WP_Pay_Statuses::CANCELLED:
+			case Statuses::CANCELLED:
 
 				break;
-			case Pronamic_WP_Pay_Statuses::EXPIRED:
+			case Statuses::EXPIRED:
 
 				break;
-			case Pronamic_WP_Pay_Statuses::FAILURE:
+			case Statuses::FAILURE:
 
 				break;
-			case Pronamic_WP_Pay_Statuses::SUCCESS:
+			case Statuses::SUCCESS:
 				if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
 					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_ad_order( $id );
 
@@ -311,7 +313,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 				}
 
 				break;
-			case Pronamic_WP_Pay_Statuses::OPEN:
+			case Statuses::OPEN:
 
 				break;
 			default:
