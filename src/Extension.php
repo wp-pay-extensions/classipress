@@ -117,7 +117,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 	//////////////////////////////////////////////////
 
-	private function get_config_id() {
+	private static function get_config_id() {
 		global $app_abbr;
 
 		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
@@ -128,10 +128,10 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	/**
 	 * Get the config
 	 *
-	 * @return Pronamic_WordPress_IDeal_Configuration
+	 * @return \Pronamic\WordPress\Pay\Core\Gateway
 	 */
-	private function get_gateway() {
-		$config_id = $this->get_config_id();
+	private static function get_gateway() {
+		$config_id = self::get_config_id();
 
 		$gateway = Plugin::get_gateway( $config_id );
 
@@ -161,9 +161,9 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			return;
 		}
 
-		$config_id = $this->get_config_id();
+		$config_id = self::get_config_id();
 
-		$gateway = $this->get_gateway();
+		$gateway = self::get_gateway();
 
 		if ( ! $gateway ) {
 			return;
@@ -197,7 +197,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		$transaction_id = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::add_transaction_entry( $order_values );
 
 		// Handle gateway
-		$gateway = $this->get_gateway();
+		$gateway = self::get_config_id();
 
 		if ( ! $gateway ) {
 			return;
