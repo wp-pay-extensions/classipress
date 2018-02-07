@@ -56,8 +56,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
 			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
 			add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
-			add_filter( 'pronamic_payment_source_description_' . self::SLUG,   array( __CLASS__, 'source_description' ), 10, 2 );
-			add_filter( 'pronamic_payment_source_url_' . self::SLUG,   array( __CLASS__, 'source_url' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
 		}
 	}
 
@@ -81,15 +81,15 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			),
 			// Title
 			array(
-				'type'    => 'title',
-				'name'    => __( 'iDEAL Options', 'pronamic_ideal' ),
-				'id'      => '',
+				'type' => 'title',
+				'name' => __( 'iDEAL Options', 'pronamic_ideal' ),
+				'id'   => '',
 			),
 			// Logo/Picture
 			array(
-				'type'    => 'logo',
-				'name'    => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/icon-32x32.png', Plugin::$file ) ),
-				'id'      => '',
+				'type' => 'logo',
+				'name' => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/icon-32x32.png', Plugin::$file ) ),
+				'id'   => '',
 			),
 			// Select Box
 			array(
@@ -109,8 +109,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 				'id'      => $app_abbr . '_pronamic_ideal_config_id',
 			),
 			array(
-				'type'    => 'tabend',
-				'id'      => '',
+				'type' => 'tabend',
+				'id'   => '',
 			),
 		);
 	}
@@ -252,29 +252,24 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
-		$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
+		$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
 
 		$url = $data->get_normal_return_url();
 
 		switch ( $payment->status ) {
 			case Statuses::CANCELLED:
-
 				break;
 			case Statuses::EXPIRED:
-
 				break;
 			case Statuses::FAILURE:
-
 				break;
 			case Statuses::SUCCESS:
 				$url = $data->get_success_url();
 
 				break;
 			case Statuses::OPEN:
-
 				break;
 			default:
-
 				break;
 		}
 
@@ -286,22 +281,19 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	/**
 	 * Update lead status of the specified payment
 	 *
-	 * @param string $payment
+	 * @param Payment $payment
 	 */
-	public static function update_status( Pronamic_Pay_Payment $payment ) {
+	public static function update_status( Payment $payment ) {
 		$id = $payment->get_source_id();
 
 		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
 
 		switch ( $payment->status ) {
 			case Statuses::CANCELLED:
-
 				break;
 			case Statuses::EXPIRED:
-
 				break;
 			case Statuses::FAILURE:
-
 				break;
 			case Statuses::SUCCESS:
 				if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
@@ -314,10 +306,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 				break;
 			case Statuses::OPEN:
-
 				break;
 			default:
-
 				break;
 		}
 	}
@@ -328,9 +318,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	 * Source column
 	 */
 	public static function source_text( $text, Pronamic_Pay_Payment $payment ) {
-		$text  = '';
-
-		$text .= __( 'ClassiPress', 'pronamic_ideal' ) . '<br />';
+		$text = __( 'ClassiPress', 'pronamic_ideal' ) . '<br />';
 
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
