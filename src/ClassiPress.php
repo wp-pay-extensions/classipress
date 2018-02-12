@@ -1,16 +1,18 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
+
 /**
  * Title: ClassiPress
  * Description:
  * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
+ * @author  Remco Tolsma
  * @version 1.0.3
- * @since 1.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
+class ClassiPress {
 	/**
 	 * Check if ClassiPress is active (Automattic/developer style)
 	 *
@@ -43,7 +45,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 	 * Add an transaction entry for the specified order
 	 *
 	 * @param array $order
-	 * @return transaction ID
+	 *
+	 * @return string transaction ID
 	 */
 	public static function add_transaction_entry( array $order ) {
 		/*
@@ -75,7 +78,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 	/**
 	 * Get order by id
 	 *
-	 * @param string $id
+	 * @param $order_id
+	 *
 	 * @return mixed order array or null
 	 */
 	public static function get_order_by_id( $order_id ) {
@@ -85,7 +89,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 		 * The table structure of the 'cp_order_info' table can be found here:
 		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/install-script.php?at=3.2.1#cl-166
 		 */
-		$sql = $wpdb->prepare( "
+
+		return $wpdb->get_row( $wpdb->prepare( "
 			SELECT
 				*
 			FROM
@@ -93,9 +98,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 			WHERE
 				txn_id = %s
 			", $order_id
-		);
-
-		return $wpdb->get_row( $sql, ARRAY_A );
+		), ARRAY_A );
 	}
 
 	//////////////////////////////////////////////////
@@ -164,6 +167,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 	 * Get ad by id
 	 *
 	 * @param string $order_id
+	 *
+	 * @return array|null|object|void
 	 */
 	public static function get_post_ad_by_id( $order_id ) {
 		global $wpdb;
@@ -175,7 +180,8 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 		 * We have copied this from the PayPal gateway:
 		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/paypal/ipn.php?at=3.2.1#cl-178
 		 */
-		$sql = $wpdb->prepare( "
+
+		return $wpdb->get_row( $wpdb->prepare( "
 			SELECT
 				post.ID,
 				post.post_status
@@ -191,9 +197,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 					AND
 				meta.meta_value = %s
 			", $order_id
-		);
-
-		return $wpdb->get_row( $sql );
+		) );
 	}
 
 	//////////////////////////////////////////////////
@@ -203,9 +207,11 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 	 *
 	 * @param string $id
 	 * @param string $status
+	 *
+	 * @return int|\WP_Error
 	 */
 	public static function update_ad_status( $id, $status ) {
-		$data = array();
+		$data                = array();
 		$data['ID']          = $id;
 		$data['post_status'] = $status;
 
@@ -241,8 +247,9 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress {
 	/**
 	 * Update payment status
 	 *
-	 * @param string $id
+	 * @param        $txn_id
 	 * @param string $status
+	 *
 	 * @return int
 	 */
 	public static function update_payment_status_by_txn_id( $txn_id, $status ) {

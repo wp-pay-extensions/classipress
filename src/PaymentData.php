@@ -1,5 +1,8 @@
 <?php
-use Pronamic\WordPress\Pay\Payments\PaymentData;
+
+namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
+
+use Pronamic\WordPress\Pay\Payments\PaymentData as Pay_PaymentData;
 use Pronamic\WordPress\Pay\Payments\Item;
 use Pronamic\WordPress\Pay\Payments\Items;
 
@@ -9,11 +12,11 @@ use Pronamic\WordPress\Pay\Payments\Items;
  * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
+ * @author  Remco Tolsma
  * @version 1.0.3
- * @since 1.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends PaymentData {
+class PaymentData extends Pay_PaymentData {
 	/**
 	 * Order values
 	 *
@@ -160,7 +163,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends PaymentData {
 			 * We query the order info sometimes directly from the database,
 			 * if we do this the 'notify_url' isn't directly available
 			 */
-			if ( Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
+			if ( Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
 				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
 				$url = add_query_arg(
@@ -209,7 +212,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends PaymentData {
 			 * ClassiPress is doing in similar check in the following file:
 			 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/gateway.php?at=3.2.1#cl-31
 			 */
-			if ( Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
+			if ( Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
 				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
 				$url = add_query_arg(
