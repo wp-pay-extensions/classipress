@@ -92,7 +92,7 @@ class Extension {
 			// Logo/Picture
 			array(
 				'type' => 'logo',
-				'name' => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/icon-32x32.png', Plugin::$file ) ),
+				'name' => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/ideal/icon-32x32.png', Plugin::$file ) ),
 				'id'   => '',
 			),
 			// Select Box
