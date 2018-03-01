@@ -25,8 +25,6 @@ class ClassiPress {
 		return defined( 'APP_TD' ) && 'classipress' === APP_TD;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get the current ClassPress version number
 	 *
@@ -38,8 +36,6 @@ class ClassiPress {
 
 		return $app_version;
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Add an transaction entry for the specified order
@@ -73,8 +69,6 @@ class ClassiPress {
 		return $transaction_id;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get order by id
 	 *
@@ -100,8 +94,6 @@ class ClassiPress {
 			", $order_id
 		), ARRAY_A );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Process membership order
@@ -161,8 +153,6 @@ class ClassiPress {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get ad by id
 	 *
@@ -199,8 +189,6 @@ class ClassiPress {
 			", $order_id
 		) );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Update ad status
@@ -241,8 +229,6 @@ class ClassiPress {
 
 		return $result;
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Update payment status

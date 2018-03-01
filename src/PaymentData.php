@@ -24,8 +24,6 @@ class PaymentData extends Pay_PaymentData {
 	 */
 	private $order_values;
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Construct and intializes an ClassiPress iDEAL data proxy
 	 *
@@ -37,8 +35,6 @@ class PaymentData extends Pay_PaymentData {
 		$this->order_values = $order_values;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get source indicatir
 	 *
@@ -48,8 +44,6 @@ class PaymentData extends Pay_PaymentData {
 	public function get_source() {
 		return 'classipress';
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Get description
@@ -109,17 +103,9 @@ class PaymentData extends Pay_PaymentData {
 		return $items;
 	}
 
-	//////////////////////////////////////////////////
-	// Currency
-	//////////////////////////////////////////////////
-
 	public function get_currency_alphabetic_code() {
 		return get_option( 'cp_curr_pay_type' );
 	}
-
-	//////////////////////////////////////////////////
-	// Customer
-	//////////////////////////////////////////////////
 
 	public function get_email() {
 		$user_id = $this->order_values['user_id'];
@@ -144,10 +130,6 @@ class PaymentData extends Pay_PaymentData {
 	public function get_zip() {
 		return $this->order_values['cp_zipcode'];
 	}
-
-	//////////////////////////////////////////////////
-	// URL's
-	//////////////////////////////////////////////////
 
 	/**
 	 * Get notify URL
@@ -238,8 +220,6 @@ class PaymentData extends Pay_PaymentData {
 
 		return $url;
 	}
-
-	//////////////////////////////////////////////////
 
 	public function get_normal_return_url() {
 		return $this->get_notify_url();

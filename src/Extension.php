@@ -26,8 +26,6 @@ class Extension {
 	 */
 	const SLUG = 'classipress';
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Bootstrap
 	 */
@@ -42,8 +40,6 @@ class Extension {
 			add_action( 'cp_action_gateway_values', array( __CLASS__, 'gateway_values' ) );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Initialize
@@ -64,8 +60,6 @@ class Extension {
 			add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Gateway value
@@ -119,8 +113,6 @@ class Extension {
 		);
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get config id.
 	 *
@@ -147,8 +139,6 @@ class Extension {
 		return $gateway;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Add the option to the payment drop-down list on checkout
 	 */
@@ -162,8 +152,6 @@ class Extension {
 			);
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Process gateway
@@ -191,8 +179,6 @@ class Extension {
 
 		exit;
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Process gateway
@@ -247,8 +233,6 @@ class Extension {
 		<?php
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Payment redirect URL filter.
 	 *
@@ -288,8 +272,6 @@ class Extension {
 		return $url;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Update lead status of the specified payment
 	 *
@@ -323,8 +305,6 @@ class Extension {
 				break;
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Source column

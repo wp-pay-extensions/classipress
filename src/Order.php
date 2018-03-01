@@ -24,8 +24,6 @@ class Order {
 		return isset( $order['ad_id'] ) && ! empty( $order['ad_id'] );
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Check if the order info is about an package
 	 *
@@ -36,8 +34,6 @@ class Order {
 	public static function is_package( array $order ) {
 		return ! self::is_advertisement( $order );
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Check if the order is completed
