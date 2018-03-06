@@ -52,6 +52,7 @@ class PaymentData extends Pay_PaymentData {
 	 * @return string
 	 */
 	public function get_description() {
+		/* translators: %s: order id */
 		return sprintf( __( 'Advertisement %s', 'pronamic_ideal' ), $this->get_order_id() );
 	}
 

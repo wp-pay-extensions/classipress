@@ -175,7 +175,7 @@ class Extension {
 
 		$payment = Plugin::start( self::get_config_id(), $gateway, $data );
 
-		wp_redirect( $payment->get_pay_redirect_url() );
+		wp_safe_redirect( $payment->get_pay_redirect_url() );
 
 		exit;
 	}
@@ -320,6 +320,7 @@ class Extension {
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
 			add_query_arg( 'page', 'transactions', admin_url( 'admin.php' ) ),
+			/* translators: %s: payment source id */
 			sprintf( __( 'Order #%s', 'pronamic_ideal' ), $payment->get_source_id() )
 		);
 
