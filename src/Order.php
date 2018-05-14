@@ -9,7 +9,7 @@ namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
  * Company: Pronamic
  *
  * @author  Remco Tolsma
- * @version 1.0.3
+ * @version 2.0.0
  * @since   1.0.0
  */
 class Order {
