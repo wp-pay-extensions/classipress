@@ -1,24 +1,28 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
+
+use Pronamic\WordPress\Pay\Payments\PaymentData as Pay_PaymentData;
+use Pronamic\WordPress\Pay\Payments\Item;
+use Pronamic\WordPress\Pay\Payments\Items;
+
 /**
  * Title: ClassiPress iDEAL data proxy
  * Description:
- * Copyright: Copyright (c) 2005 - 2017
+ * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
- * @version 1.0.3
- * @since 1.0.0
+ * @author  Remco Tolsma
+ * @version 2.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay_PaymentData {
+class PaymentData extends Pay_PaymentData {
 	/**
 	 * Order values
 	 *
 	 * @var array
 	 */
 	private $order_values;
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Construct and intializes an ClassiPress iDEAL data proxy
@@ -31,8 +35,6 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 		$this->order_values = $order_values;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get source indicatir
 	 *
@@ -43,8 +45,6 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 		return 'classipress';
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get description
 	 *
@@ -52,6 +52,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 	 * @return string
 	 */
 	public function get_description() {
+		/* translators: %s: order id */
 		return sprintf( __( 'Advertisement %s', 'pronamic_ideal' ), $this->get_order_id() );
 	}
 
@@ -77,11 +78,11 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 	 * Get items
 	 *
 	 * @see Pronamic_Pay_PaymentDataInterface::get_items()
-	 * @return Pronamic_IDeal_Items
+	 * @return Items
 	 */
 	public function get_items() {
 		// Items
-		$items = new Pronamic_IDeal_Items();
+		$items = new Items();
 
 		// Item
 		// We only add one total item, because iDEAL cant work with negative price items (discount)
@@ -92,7 +93,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 			$amount = $this->order_values['item_amount'];
 		}
 
-		$item = new Pronamic_IDeal_Item();
+		$item = new Item();
 		$item->setNumber( $this->order_values['item_number'] );
 		$item->setDescription( $this->order_values['item_name'] );
 		$item->setPrice( $amount );
@@ -103,17 +104,9 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 		return $items;
 	}
 
-	//////////////////////////////////////////////////
-	// Currency
-	//////////////////////////////////////////////////
-
 	public function get_currency_alphabetic_code() {
 		return get_option( 'cp_curr_pay_type' );
 	}
-
-	//////////////////////////////////////////////////
-	// Customer
-	//////////////////////////////////////////////////
 
 	public function get_email() {
 		$user_id = $this->order_values['user_id'];
@@ -139,10 +132,6 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 		return $this->order_values['cp_zipcode'];
 	}
 
-	//////////////////////////////////////////////////
-	// URL's
-	//////////////////////////////////////////////////
-
 	/**
 	 * Get notify URL
 	 *
@@ -157,7 +146,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 			 * We query the order info sometimes directly from the database,
 			 * if we do this the 'notify_url' isn't directly available
 			 */
-			if ( Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
+			if ( Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
 				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
 				$url = add_query_arg(
@@ -206,7 +195,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 			 * ClassiPress is doing in similar check in the following file:
 			 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/gateway.php?at=3.2.1#cl-31
 			 */
-			if ( Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_advertisement( $this->order_values ) ) {
+			if ( Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
 				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
 				$url = add_query_arg(
@@ -232,8 +221,6 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData extends Pronamic_WP_Pay
 
 		return $url;
 	}
-
-	//////////////////////////////////////////////////
 
 	public function get_normal_return_url() {
 		return $this->get_notify_url();

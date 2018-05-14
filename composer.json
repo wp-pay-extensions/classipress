@@ -3,7 +3,7 @@
 	"description": "ClassiPress driver for the WordPress payment processing library.",
 	"keywords": ["wordpress", "wp", "pay", "classipress", "extension", "pronamic"],
 	"homepage": "http://www.wp-pay.org/extensions/classipress/",
-	"license": "GPL-3.0+",
+	"license": "GPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Pronamic",
@@ -24,7 +24,9 @@
 		"source": "https://github.com/wp-pay-extensions/classipress"
 	},
 	"autoload": {
-		"classmap": ["src/"]
+		"psr-4": {
+			"Pronamic\\WordPress\\Pay\\Extensions\\ClassiPress\\": "src/"
+		}
 	},
 	"config": {
 		"platform": {
@@ -33,16 +35,14 @@
 	},
 	"require": {
 		"php": "^5.3",
-		"wp-pay/core": "^1.0.2"
+		"wp-pay/core": "^2.0"
 	},
 	"require-dev": {
-		"satooshi/php-coveralls": "^1.0",
-		"squizlabs/php_codesniffer": "^2.7",
-		"wp-coding-standards/wpcs": "^0.10.0"
-	},
-	"scripts": {
-		"post-autoload-dump": [
-			"if [ -d vendor/wp-coding-standards/wpcs ]; then vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs; fi"
-		]
+		"php-coveralls/php-coveralls": "^1.0",
+		"phpmd/phpmd": "^2.4",
+		"phpunit/phpunit": "^4.5",
+		"squizlabs/php_codesniffer": "^2.9",
+		"wp-coding-standards/wpcs": "^0.14.1",
+		"wimg/php-compatibility": "^8.1"
 	}
 }

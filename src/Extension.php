@@ -1,24 +1,30 @@
 <?php
 
+namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
+
+use Pronamic\WordPress\Pay\Core\PaymentMethods;
+use Pronamic\WordPress\Pay\Core\Statuses;
+use Pronamic\WordPress\Pay\Payments\Payment;
+use Pronamic\WordPress\Pay\Plugin;
+use Pronamic\WordPress\Pay\Util;
+
 /**
  * Title: ClassiPress iDEAL Add-On
  * Description:
- * Copyright: Copyright (c) 2005 - 2017
+ * Copyright: Copyright (c) 2005 - 2018
  * Company: Pronamic
  *
- * @author Remco Tolsma
- * @version 1.0.4
- * @since 1.0.0
+ * @author  Remco Tolsma
+ * @version 2.0.0
+ * @since   1.0.0
  */
-class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
+class Extension {
 	/**
 	 * Slug
 	 *
 	 * @var string
 	 */
 	const SLUG = 'classipress';
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Bootstrap
@@ -35,8 +41,6 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Initialize
 	 */
@@ -52,12 +56,10 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			add_filter( 'pronamic_payment_redirect_url_' . self::SLUG, array( __CLASS__, 'redirect_url' ), 10, 2 );
 			add_action( 'pronamic_payment_status_update_' . self::SLUG, array( __CLASS__, 'update_status' ), 10, 1 );
 			add_filter( 'pronamic_payment_source_text_' . self::SLUG, array( __CLASS__, 'source_text' ), 10, 2 );
-			add_filter( 'pronamic_payment_source_description_' . self::SLUG,   array( __CLASS__, 'source_description' ), 10, 2 );
-			add_filter( 'pronamic_payment_source_url_' . self::SLUG,   array( __CLASS__, 'source_url' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_description_' . self::SLUG, array( __CLASS__, 'source_description' ), 10, 2 );
+			add_filter( 'pronamic_payment_source_url_' . self::SLUG, array( __CLASS__, 'source_url' ), 10, 2 );
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Gateway value
@@ -77,15 +79,15 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			),
 			// Title
 			array(
-				'type'    => 'title',
-				'name'    => __( 'iDEAL Options', 'pronamic_ideal' ),
-				'id'      => '',
+				'type' => 'title',
+				'name' => __( 'iDEAL Options', 'pronamic_ideal' ),
+				'id'   => '',
 			),
 			// Logo/Picture
 			array(
-				'type'    => 'logo',
-				'name'    => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/icon-32x32.png', Pronamic_WP_Pay_Plugin::$file ) ),
-				'id'      => '',
+				'type' => 'logo',
+				'name' => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/ideal/icon-32x32.png', Plugin::$file ) ),
+				'id'   => '',
 			),
 			// Select Box
 			array(
@@ -101,19 +103,22 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			array(
 				'type'    => 'select',
 				'name'    => __( 'iDEAL Configuration', 'pronamic_ideal' ),
-				'options' => Pronamic_WP_Pay_Plugin::get_config_select_options(),
+				'options' => Plugin::get_config_select_options(),
 				'id'      => $app_abbr . '_pronamic_ideal_config_id',
 			),
 			array(
-				'type'    => 'tabend',
-				'id'      => '',
+				'type' => 'tabend',
+				'id'   => '',
 			),
 		);
 	}
 
-	//////////////////////////////////////////////////
-
-	private function get_config_id() {
+	/**
+	 * Get config id.
+	 *
+	 * @return mixed
+	 */
+	private static function get_config_id() {
 		global $app_abbr;
 
 		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
@@ -122,19 +127,17 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 	}
 
 	/**
-	 * Get the config
+	 * Get gateway.
 	 *
-	 * @return Pronamic_WordPress_IDeal_Configuration
+	 * @return \Pronamic\WordPress\Pay\Core\Gateway
 	 */
-	private function get_gateway() {
-		$config_id = $this->get_config_id();
+	private static function get_gateway() {
+		$config_id = self::get_config_id();
 
-		$gateway = Pronamic_WP_Pay_Plugin::get_gateway( $config_id );
+		$gateway = Plugin::get_gateway( $config_id );
 
 		return $gateway;
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Add the option to the payment drop-down list on checkout
@@ -143,11 +146,12 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		global $app_abbr;
 
 		if ( 'yes' === get_option( $app_abbr . '_pronamic_ideal_enable' ) ) {
-			echo '<option value="pronamic_ideal">' . __( 'iDEAL', 'pronamic_ideal' ) . '</option>';
+			printf( // WPCS: xss ok.
+				'<option value="pronamic_ideal">%s</option>',
+				PaymentMethods::get_name( PaymentMethods::IDEAL )
+			);
 		}
 	}
-
-	//////////////////////////////////////////////////
 
 	/**
 	 * Process gateway
@@ -157,9 +161,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 			return;
 		}
 
-		$config_id = $this->get_config_id();
-
-		$gateway = $this->get_gateway();
+		$gateway = self::get_gateway();
 
 		if ( ! $gateway ) {
 			return;
@@ -167,21 +169,21 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 		$id = filter_input( INPUT_POST, 'oid', FILTER_SANITIZE_STRING );
 
-		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
+		$order = ClassiPress::get_order_by_id( $id );
 
-		$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
+		$data = new PaymentData( $order );
 
-		$payment = Pronamic_WP_Pay_Plugin::start( $config_id, $gateway, $data );
+		$payment = Plugin::start( self::get_config_id(), $gateway, $data );
 
-		wp_redirect( $payment->get_pay_redirect_url() );
+		wp_safe_redirect( $payment->get_pay_redirect_url() );
 
 		exit;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Process gateway
+	 *
+	 * @param $order_values
 	 */
 	public static function gateway_process( $order_values ) {
 		// If gateway wasn't selected then immediately return
@@ -190,16 +192,16 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		}
 
 		// Add transaction entry
-		$transaction_id = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::add_transaction_entry( $order_values );
+		$transaction_id = ClassiPress::add_transaction_entry( $order_values );
 
 		// Handle gateway
-		$gateway = $this->get_gateway();
+		$gateway = self::get_config_id();
 
 		if ( ! $gateway ) {
 			return;
 		}
 
-		$data = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order_values );
+		$data = new PaymentData( $order_values );
 
 		// Hide the checkout page container HTML element
 		echo '<style type="text/css">.thankyou center { display: none; }</style>';
@@ -208,12 +210,12 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		<form class="form_step" method="post" action="">
 			<?php
 
-			echo Pronamic_IDeal_IDeal::htmlHiddenFields( array(
-				'cp_payment_method'  => 'pronamic_ideal',
-				'oid'                => $data->get_order_id(),
+			echo Util::html_hidden_fields( array( // WPCS: xss ok.
+				'cp_payment_method' => 'pronamic_ideal',
+				'oid'               => $data->get_order_id(),
 			) );
 
-			echo $gateway->get_input_html();
+			echo $gateway->get_input_html(); // WPCS: xss ok.
 
 			?>
 
@@ -222,7 +224,7 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 				printf(
 					'<input class="ideal-button" type="submit" name="classipress_pronamic_ideal" value="%s" />',
-					__( 'Pay with iDEAL', 'pronamic_ideal' )
+					esc_attr( __( 'Pay with iDEAL', 'pronamic_ideal' ) )
 				);
 
 				?>
@@ -231,104 +233,94 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 		<?php
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Payment redirect URL filter.
 	 *
 	 * @since unreleased
-	 * @param string                  $url
-	 * @param Pronamic_WP_Pay_Payment $payment
+	 *
+	 * @param string  $url
+	 * @param Payment $payment
+	 *
 	 * @return string
 	 */
-	public static function redirect_url( $url, $payment ) {
+	public static function redirect_url( $url, Payment $payment ) {
 		$id = $payment->get_source_id();
 
-		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
+		$order = ClassiPress::get_order_by_id( $id );
 
-		$data  = new Pronamic_WP_Pay_Extensions_ClassiPress_PaymentData( $order );
+		$data = new PaymentData( $order );
 
 		$url = $data->get_normal_return_url();
 
 		switch ( $payment->status ) {
-			case Pronamic_WP_Pay_Statuses::CANCELLED:
-
+			case Statuses::CANCELLED:
 				break;
-			case Pronamic_WP_Pay_Statuses::EXPIRED:
-
+			case Statuses::EXPIRED:
 				break;
-			case Pronamic_WP_Pay_Statuses::FAILURE:
-
+			case Statuses::FAILURE:
 				break;
-			case Pronamic_WP_Pay_Statuses::SUCCESS:
+			case Statuses::SUCCESS:
 				$url = $data->get_success_url();
 
 				break;
-			case Pronamic_WP_Pay_Statuses::OPEN:
-
+			case Statuses::OPEN:
 				break;
 			default:
-
 				break;
 		}
 
 		return $url;
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Update lead status of the specified payment
 	 *
-	 * @param string $payment
+	 * @param Payment $payment
 	 */
-	public static function update_status( Pronamic_Pay_Payment $payment ) {
+	public static function update_status( Payment $payment ) {
 		$id = $payment->get_source_id();
 
-		$order = Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::get_order_by_id( $id );
+		$order = ClassiPress::get_order_by_id( $id );
 
 		switch ( $payment->status ) {
-			case Pronamic_WP_Pay_Statuses::CANCELLED:
-
+			case Statuses::CANCELLED:
 				break;
-			case Pronamic_WP_Pay_Statuses::EXPIRED:
-
+			case Statuses::EXPIRED:
 				break;
-			case Pronamic_WP_Pay_Statuses::FAILURE:
-
+			case Statuses::FAILURE:
 				break;
-			case Pronamic_WP_Pay_Statuses::SUCCESS:
-				if ( ! Pronamic_WP_Pay_Extensions_ClassiPress_Order::is_completed( $order ) ) {
-					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_ad_order( $id );
+			case Statuses::SUCCESS:
+				if ( ! Order::is_completed( $order ) ) {
+					ClassiPress::process_ad_order( $id );
 
-					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::process_membership_order( $order );
+					ClassiPress::process_membership_order( $order );
 
-					Pronamic_WP_Pay_Extensions_ClassiPress_ClassiPress::update_payment_status_by_txn_id( $id, Pronamic_WP_Pay_Extensions_ClassiPress_PaymentStatuses::COMPLETED );
+					ClassiPress::update_payment_status_by_txn_id( $id, PaymentStatuses::COMPLETED );
 				}
 
 				break;
-			case Pronamic_WP_Pay_Statuses::OPEN:
-
+			case Statuses::OPEN:
 				break;
 			default:
-
 				break;
 		}
 	}
 
-	//////////////////////////////////////////////////
-
 	/**
 	 * Source column
+	 *
+	 * @param         $text
+	 * @param Payment $payment
+	 *
+	 * @return string
 	 */
-	public static function source_text( $text, Pronamic_Pay_Payment $payment ) {
-		$text  = '';
-
-		$text .= __( 'ClassiPress', 'pronamic_ideal' ) . '<br />';
+	public static function source_text( $text, Payment $payment ) {
+		$text = __( 'ClassiPress', 'pronamic_ideal' ) . '<br />';
 
 		$text .= sprintf(
 			'<a href="%s">%s</a>',
 			add_query_arg( 'page', 'transactions', admin_url( 'admin.php' ) ),
+			/* translators: %s: payment source id */
 			sprintf( __( 'Order #%s', 'pronamic_ideal' ), $payment->get_source_id() )
 		);
 
@@ -337,19 +329,25 @@ class Pronamic_WP_Pay_Extensions_ClassiPress_Extension {
 
 	/**
 	 * Source description.
+	 *
+	 * @param         $description
+	 * @param Payment $payment
+	 *
+	 * @return string|void
 	 */
-	public static function source_description( $description, Pronamic_Pay_Payment $payment ) {
-		$description = __( 'ClassiPress Order', 'pronamic_ideal' );
-
-		return $description;
+	public static function source_description( $description, Payment $payment ) {
+		return __( 'ClassiPress Order', 'pronamic_ideal' );
 	}
 
 	/**
 	 * Source URL.
+	 *
+	 * @param         $url
+	 * @param Payment $payment
+	 *
+	 * @return string
 	 */
-	public static function source_url( $url, Pronamic_Pay_Payment $payment ) {
-		$url = add_query_arg( 'page', 'transactions', admin_url( 'admin.php' ) );
-
-		return $url;
+	public static function source_url( $url, Payment $payment ) {
+		return add_query_arg( 'page', 'transactions', admin_url( 'admin.php' ) );
 	}
 }
