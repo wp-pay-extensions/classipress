@@ -94,10 +94,10 @@ class PaymentData extends Pay_PaymentData {
 		}
 
 		$item = new Item();
-		$item->setNumber( $this->order_values['item_number'] );
-		$item->setDescription( $this->order_values['item_name'] );
-		$item->setPrice( $amount );
-		$item->setQuantity( 1 );
+		$item->set_number( $this->order_values['item_number'] );
+		$item->set_description( $this->order_values['item_name'] );
+		$item->set_price( $amount );
+		$item->set_quantity( 1 );
 
 		$items->addItem( $item );
 
