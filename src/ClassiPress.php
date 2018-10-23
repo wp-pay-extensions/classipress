@@ -16,8 +16,8 @@ class ClassiPress {
 	/**
 	 * Check if ClassiPress is active (Automattic/developer style)
 	 *
-	 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6eace2a6801625a9d38c5490f4540a/functions.php?at=3.2.1#cl-28
-	 * @see https://github.com/Automattic/developer/blob/1.1.2/developer.php#L73
+	 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6eace2a6801625a9d38c5490f4540a/functions.php?at=3.2.1#cl-28
+	 * @link https://github.com/Automattic/developer/blob/1.1.2/developer.php#L73
 	 *
 	 * @return boolean
 	 */
@@ -31,7 +31,7 @@ class ClassiPress {
 	 * @return string
 	 */
 	public static function get_version() {
-		// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6eace2a6801625a9d38c5490f4540a/functions.php?at=3.2.1#cl-15
+		// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6eace2a6801625a9d38c5490f4540a/functions.php?at=3.2.1#cl-15
 		global $app_version;
 
 		return $app_version;
@@ -40,28 +40,28 @@ class ClassiPress {
 	/**
 	 * Add an transaction entry for the specified order
 	 *
-	 * @param array $order
+	 * @param array $order Order.
 	 *
 	 * @return string transaction ID
 	 */
 	public static function add_transaction_entry( array $order ) {
 		/*
 		 * We have copied this from the "Bank transfer" gateway:
-		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/banktransfer/banktransfer.php?at=3.2.1#cl-39
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/banktransfer/banktransfer.php?at=3.2.1#cl-39
 		 */
 		$transaction_id = false;
 
-		// Require ClassiPress gateway process file
+		// Require ClassiPress gateway process file.
 		$file = get_template_directory() . '/includes/gateways/process.php';
 
 		if ( is_readable( $file ) ) {
 			require_once $file;
 
-			// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/process.php?at=3.2.1#cl-106
+			// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/process.php?at=3.2.1#cl-106
 			$transaction_entry = cp_prepare_transaction_entry( $order );
 
 			if ( $transaction_entry ) {
-				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/process.php?at=3.2.1#cl-152
+				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/process.php?at=3.2.1#cl-152
 				$transaction_id = cp_add_transaction_entry( $transaction_entry );
 			}
 		}
@@ -70,9 +70,9 @@ class ClassiPress {
 	}
 
 	/**
-	 * Get order by id
+	 * Get order by ID.
 	 *
-	 * @param $order_id
+	 * @param string $order_id Order ID.
 	 *
 	 * @return mixed order array or null
 	 */
@@ -81,69 +81,76 @@ class ClassiPress {
 
 		/*
 		 * The table structure of the 'cp_order_info' table can be found here:
-		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/install-script.php?at=3.2.1#cl-166
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/install-script.php?at=3.2.1#cl-166
 		 */
 
-		return $wpdb->get_row( $wpdb->prepare( "
+		return $wpdb->get_row(
+			$wpdb->prepare(
+				"
 			SELECT
 				*
 			FROM
 				$wpdb->cp_order_info
 			WHERE
 				txn_id = %s
-			", $order_id
-		), ARRAY_A );
+			",
+				$order_id
+			),
+			ARRAY_A
+		);
 	}
 
 	/**
-	 * Process membership order
+	 * Process membership order.
 	 *
-	 * @param array
+	 * @param array $order_info Order info.
 	 */
 	public static function process_membership_order( $order_info ) {
 		$file = get_template_directory() . '/includes/forms/step-functions.php';
 
-		if ( is_readable( $file ) ) {
-			include_once $file;
+		if ( ! is_readable( $file ) ) {
+			return;
+		}
 
-			/*
-			 * Abracadabra
-			 */
-			$txn_id = $order_info['txn_id'];
+		include_once $file;
 
-			/*
-			 * First we retrieve user orders by the transaction id
-			 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2488
-			 */
-			$orders = get_user_orders( '', $txn_id );
-			$order  = get_option( $orders );
+		/*
+		 * Abracadabra
+		 */
+		$txn_id = $order_info['txn_id'];
 
-			/*
-			 * Get the user ID from the orders
-			 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2476
-			 */
-			$user_id = get_order_userid( $orders );
+		/*
+		 * First we retrieve user orders by the transaction id
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2488
+		 */
+		$orders = get_user_orders( '', $txn_id );
+		$order  = get_option( $orders );
 
-			/*
-			 * Get user data
-			 * @see http://codex.wordpress.org/Function_Reference/get_userdata
-			 */
-			$userdata = get_userdata( $user_id );
+		/*
+		 * Get the user ID from the orders
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2476
+		 */
+		$user_id = get_order_userid( $orders );
 
-			// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/forms/step-functions.php?at=3.2.1#cl-895
-			$order_processed = appthemes_process_membership_order( $userdata, $order );
+		/*
+		 * Get user data
+		 * @link http://codex.wordpress.org/Function_Reference/get_userdata
+		 */
+		$userdata = get_userdata( $user_id );
 
-			if ( $order_processed ) {
-				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-emails.php?at=3.2.1#cl-563
-				cp_owner_activated_membership_email( $userdata, $order_processed );
-			}
+		// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/forms/step-functions.php?at=3.2.1#cl-895
+		$order_processed = appthemes_process_membership_order( $userdata, $order );
+
+		if ( $order_processed ) {
+			// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-emails.php?at=3.2.1#cl-563
+			cp_owner_activated_membership_email( $userdata, $order_processed );
 		}
 	}
 
 	/**
-	 * Process ad order
+	 * Process ad order.
 	 *
-	 * @param array
+	 * @param string $order_id Order ID.
 	 */
 	public static function process_ad_order( $order_id ) {
 		$post = self::get_post_ad_by_id( $order_id );
@@ -154,24 +161,26 @@ class ClassiPress {
 	}
 
 	/**
-	 * Get ad by id
+	 * Get ad by ID.
 	 *
-	 * @param string $order_id
+	 * @param string $order_id Order ID.
 	 *
-	 * @return array|null|object|void
+	 * @return array|null|object
 	 */
 	public static function get_post_ad_by_id( $order_id ) {
 		global $wpdb;
 
 		/*
 		 * The post order ID is stored in the 'cp' meta key:
-		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/forms/step-functions.php?at=3.2.1#cl-822
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/forms/step-functions.php?at=3.2.1#cl-822
 		 *
 		 * We have copied this from the PayPal gateway:
-		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/paypal/ipn.php?at=3.2.1#cl-178
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/paypal/ipn.php?at=3.2.1#cl-178
 		 */
 
-		return $wpdb->get_row( $wpdb->prepare( "
+		return $wpdb->get_row(
+			$wpdb->prepare(
+				"
 			SELECT
 				post.ID,
 				post.post_status
@@ -186,15 +195,17 @@ class ClassiPress {
 				meta.meta_key = 'cp_sys_ad_conf_id'
 					AND
 				meta.meta_value = %s
-			", $order_id
-		) );
+			",
+				$order_id
+			)
+		);
 	}
 
 	/**
-	 * Update ad status
+	 * Update ad status.
 	 *
-	 * @param string $id
-	 * @param string $status
+	 * @param string $id     Ad post ID.
+	 * @param string $status New ad post tatus.
 	 *
 	 * @return int|\WP_Error
 	 */
@@ -207,7 +218,7 @@ class ClassiPress {
 
 		/*
 		 * We have copied this from the PayPal gateway:
-		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/paypal/ipn.php?at=3.2.1#cl-190
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/paypal/ipn.php?at=3.2.1#cl-190
 		 *
 		 * now we need to update the ad expiration date so they get the full length of time
 		 * sometimes they didn't pay for the ad right away or they are renewing
@@ -221,20 +232,20 @@ class ClassiPress {
 			$duration = get_option( 'cp_prun_period' );
 		}
 
-		// set the ad listing expiration date
-		$expire_date = date_i18n( 'm/d/Y H:i:s', strtotime( '+' . $duration . ' days' ) ); // don't localize the word 'days'
+		// Set the ad listing expiration date.
+		$expire_date = date_i18n( 'm/d/Y H:i:s', strtotime( '+' . $duration . ' days' ) );
 
-		// now update the expiration date on the ad
+		// Update the ad expiration date.
 		update_post_meta( $id, 'cp_sys_expire_date', $expire_date );
 
 		return $result;
 	}
 
 	/**
-	 * Update payment status
+	 * Update payment status.
 	 *
-	 * @param        $txn_id
-	 * @param string $status
+	 * @param string $txn_id Transaction ID.
+	 * @param string $status New payment status.
 	 *
 	 * @return int
 	 */
@@ -243,7 +254,7 @@ class ClassiPress {
 
 		/*
 		 * The table structure of the 'cp_order_info' table can be found here:
-		 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/install-script.php?at=3.2.1#cl-166
+		 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/install-script.php?at=3.2.1#cl-166
 		 */
 		$result = $wpdb->update(
 			$wpdb->cp_order_info,

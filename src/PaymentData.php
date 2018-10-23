@@ -138,7 +138,7 @@ class PaymentData extends Pay_PaymentData {
 	 * @return string
 	 */
 	private function get_notify_url() {
-		// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
+		// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
 		if ( isset( $this->order_values['notify_url'] ) ) {
 			$url = $this->order_values['notify_url'];
 		} else {
@@ -148,7 +148,7 @@ class PaymentData extends Pay_PaymentData {
 			 */
 			if ( Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
-				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
+				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
 				$url = add_query_arg(
 					array(
 						'invoice' => $this->order_values['txn_id'],
@@ -158,7 +158,7 @@ class PaymentData extends Pay_PaymentData {
 				);
 			} else {
 				// Advertisement package
-				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2408
+				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2408
 				$url = add_query_arg(
 					array(
 						'invoice' => $this->order_values['txn_id'],
@@ -178,7 +178,7 @@ class PaymentData extends Pay_PaymentData {
 	 * @return string
 	 */
 	private function get_return_url() {
-		// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
+		// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
 		if ( isset( $this->order_values['return_url'] ) ) {
 			$url = $this->order_values['return_url'];
 		} else {
@@ -193,11 +193,11 @@ class PaymentData extends Pay_PaymentData {
 			 * information is about an advertisement package.
 			 *
 			 * ClassiPress is doing in similar check in the following file:
-			 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/gateway.php?at=3.2.1#cl-31
+			 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/gateway.php?at=3.2.1#cl-31
 			 */
 			if ( Order::is_advertisement( $this->order_values ) ) {
 				// Advertisement
-				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
+				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
 				$url = add_query_arg(
 					array(
 						'pid' => $this->order_values['txn_id'],
@@ -207,7 +207,7 @@ class PaymentData extends Pay_PaymentData {
 				);
 			} else {
 				// Advertisement package
-				// @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2409
+				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2409
 				$url = add_query_arg(
 					array(
 						'oid' => $this->order_values['txn_id'],
