@@ -17,7 +17,7 @@ class PaymentStatuses {
 	 * Indiactor for the 'Completed' payment status
 	 *
 	 * @var string
-	 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/admin-options.php?at=3.2.1#cl-2717
+	 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/admin-options.php?at=3.2.1#cl-2717
 	 */
 	const COMPLETED = 'Completed';
 
@@ -25,7 +25,7 @@ class PaymentStatuses {
 	 * Indiactor for the 'Pending' payment status
 	 *
 	 * @var string
-	 * @see https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/admin-options.php?at=3.2.1#cl-2730
+	 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/admin/admin-options.php?at=3.2.1#cl-2730
 	 */
 	const PENDING = 'Pending';
 }

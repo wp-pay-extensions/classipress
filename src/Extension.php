@@ -67,29 +67,29 @@ class Extension {
 	public static function gateway_values() {
 		global $app_abbr;
 
-		// Gateway values
+		// Gateway values.
 		global $action_gateway_values;
 
 		$action_gateway_values = array(
-			// Tab Start
+			// Tab Start.
 			array(
 				'type'    => 'tab',
 				'tabname' => __( 'iDEAL', 'pronamic_ideal' ),
 				'id'      => '',
 			),
-			// Title
+			// Title.
 			array(
 				'type' => 'title',
 				'name' => __( 'iDEAL Options', 'pronamic_ideal' ),
 				'id'   => '',
 			),
-			// Logo/Picture
+			// Logo/Picture.
 			array(
 				'type' => 'logo',
 				'name' => sprintf( '<img src="%s" alt="" />', plugins_url( 'images/ideal/icon-32x32.png', Plugin::$file ) ),
 				'id'   => '',
 			),
-			// Select Box
+			// Enable.
 			array(
 				'type'    => 'select',
 				'name'    => __( 'Enable iDEAL', 'pronamic_ideal' ),
@@ -99,7 +99,7 @@ class Extension {
 				),
 				'id'      => $app_abbr . '_pronamic_ideal_enable',
 			),
-			// Select Box
+			// Configuration.
 			array(
 				'type'    => 'select',
 				'name'    => __( 'iDEAL Configuration', 'pronamic_ideal' ),
