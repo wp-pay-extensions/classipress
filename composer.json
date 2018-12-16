@@ -38,6 +38,7 @@
 		"wp-pay/core": "^2.0"
 	},
 	"require-dev": {
+		"johnpbloch/wordpress": "^4.9",
 		"php-coveralls/php-coveralls": "^1.0",
 		"phpmd/phpmd": "^2.4",
 		"phpunit/phpunit": "^4.5",
