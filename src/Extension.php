@@ -335,7 +335,7 @@ class Extension {
 	 * @param string  $description Source description.
 	 * @param Payment $payment     Payment.
 	 *
-	 * @return string|void
+	 * @return string
 	 */
 	public static function source_description( $description, Payment $payment ) {
 		return __( 'ClassiPress Order', 'pronamic_ideal' );
@@ -344,7 +344,7 @@ class Extension {
 	/**
 	 * Source URL.
 	 *
-	 * @param strin   $url     Source URL.
+	 * @param string  $url     Source URL.
 	 * @param Payment $payment Payment.
 	 *
 	 * @return string
