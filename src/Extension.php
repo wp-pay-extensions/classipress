@@ -183,7 +183,7 @@ class Extension {
 	/**
 	 * Process gateway
 	 *
-	 * @param $order_values
+	 * @param array $order_values Order.
 	 */
 	public static function gateway_process( $order_values ) {
 		// If gateway wasn't selected then immediately return.
@@ -210,7 +210,7 @@ class Extension {
 		<form class="form_step" method="post" action="">
 			<?php
 
-			echo Util::html_hidden_fields(
+			echo Util::html_hidden_fields( // WPCS: xss ok.
 				array( // WPCS: xss ok.
 					'cp_payment_method' => 'pronamic_ideal',
 					'oid'               => $data->get_order_id(),
