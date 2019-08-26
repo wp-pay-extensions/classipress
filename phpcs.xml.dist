@@ -36,7 +36,5 @@
 		<exclude name="WordPress.VIP.RestrictedFunctions.wp_redirect" />
 
 		<exclude name="WordPress.WP.PreparedSQL.NotPrepared" />
-
-		<exclude name="WordPress.XSS.EscapeOutput" />
 	</rule>
 </ruleset>

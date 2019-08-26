@@ -146,8 +146,9 @@ class Extension {
 		global $app_abbr;
 
 		if ( 'yes' === get_option( $app_abbr . '_pronamic_ideal_enable' ) ) {
-			printf( // WPCS: xss ok.
+			printf(
 				'<option value="pronamic_ideal">%s</option>',
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				PaymentMethods::get_name( PaymentMethods::IDEAL )
 			);
 		}
@@ -210,14 +211,16 @@ class Extension {
 		<form class="form_step" method="post" action="">
 			<?php
 
-			echo Util::html_hidden_fields( // WPCS: xss ok.
-				array( // WPCS: xss ok.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo Util::html_hidden_fields(
+				array(
 					'cp_payment_method' => 'pronamic_ideal',
 					'oid'               => $data->get_order_id(),
 				)
 			);
 
-			echo $gateway->get_input_html(); // WPCS: xss ok.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $gateway->get_input_html();
 
 			?>
 
