@@ -5,7 +5,7 @@ namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
 /**
  * Title: Order
  * Description:
- * Copyright: Copyright (c) 2005 - 2018
+ * Copyright: 2005-2019 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
@@ -16,7 +16,7 @@ class Order {
 	/**
 	 * Check if the order info is about an advertisement
 	 *
-	 * @param array $order
+	 * @param array $order Order.
 	 *
 	 * @return boolean
 	 */
@@ -27,7 +27,7 @@ class Order {
 	/**
 	 * Check if the order info is about an package
 	 *
-	 * @param array $order
+	 * @param array $order Order.
 	 *
 	 * @return boolean
 	 */
@@ -38,7 +38,7 @@ class Order {
 	/**
 	 * Check if the order is completed
 	 *
-	 * @param array $order
+	 * @param array $order Order.
 	 *
 	 * @return boolean
 	 */

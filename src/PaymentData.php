@@ -9,7 +9,7 @@ use Pronamic\WordPress\Pay\Payments\Items;
 /**
  * Title: ClassiPress iDEAL data proxy
  * Description:
- * Copyright: Copyright (c) 2005 - 2018
+ * Copyright: 2005-2019 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
@@ -25,9 +25,9 @@ class PaymentData extends Pay_PaymentData {
 	private $order_values;
 
 	/**
-	 * Construct and intializes an ClassiPress iDEAL data proxy
+	 * Construct and initializes an ClassiPress iDEAL data proxy
 	 *
-	 * @param array $order_values
+	 * @param array $order_values Order values.
 	 */
 	public function __construct( $order_values ) {
 		parent::__construct();
@@ -81,11 +81,11 @@ class PaymentData extends Pay_PaymentData {
 	 * @return Items
 	 */
 	public function get_items() {
-		// Items
+		// Items.
 		$items = new Items();
 
 		// Item
-		// We only add one total item, because iDEAL cant work with negative price items (discount)
+		// We only add one total item, because iDEAL cant work with negative price items (discount).
 		$amount = 0;
 		if ( isset( $this->order_values['mc_gross'] ) ) {
 			$amount = $this->order_values['mc_gross'];
@@ -104,30 +104,60 @@ class PaymentData extends Pay_PaymentData {
 		return $items;
 	}
 
+	/**
+	 * Get alphabetic currency code.
+	 *
+	 * @return string
+	 */
 	public function get_currency_alphabetic_code() {
 		return get_option( 'cp_curr_pay_type' );
 	}
 
+	/**
+	 * Get email.
+	 *
+	 * @return string
+	 */
 	public function get_email() {
 		$user_id = $this->order_values['user_id'];
 
 		return get_the_author_meta( 'user_email', $user_id );
 	}
 
+	/**
+	 * Get customer name.
+	 *
+	 * @return string
+	 */
 	public function get_customer_name() {
 		$user_id = $this->order_values['user_id'];
 
 		return get_the_author_meta( 'first_name', $user_id ) . ' ' . get_the_author_meta( 'last_name', $user_id );
 	}
 
+	/**
+	 * Get address.
+	 *
+	 * @return mixed|null
+	 */
 	public function get_address() {
 		return $this->order_values['cp_street'];
 	}
 
+	/**
+	 * Get city.
+	 *
+	 * @return mixed|null
+	 */
 	public function get_city() {
 		return $this->order_values['cp_city'];
 	}
 
+	/**
+	 * Get ZIP.
+	 *
+	 * @return mixed|null
+	 */
 	public function get_zip() {
 		return $this->order_values['cp_zipcode'];
 	}
@@ -147,8 +177,11 @@ class PaymentData extends Pay_PaymentData {
 			 * if we do this the 'notify_url' isn't directly available
 			 */
 			if ( Order::is_advertisement( $this->order_values ) ) {
-				// Advertisement
-				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
+				/*
+				 * Advertisement.
+				 *
+				 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2380
+				 */
 				$url = add_query_arg(
 					array(
 						'invoice' => $this->order_values['txn_id'],
@@ -157,8 +190,11 @@ class PaymentData extends Pay_PaymentData {
 					home_url( '/' )
 				);
 			} else {
-				// Advertisement package
-				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2408
+				/*
+				 * Advertisement package.
+				 *
+				 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2408
+				 */
 				$url = add_query_arg(
 					array(
 						'invoice' => $this->order_values['txn_id'],
@@ -196,8 +232,11 @@ class PaymentData extends Pay_PaymentData {
 			 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/gateways/gateway.php?at=3.2.1#cl-31
 			 */
 			if ( Order::is_advertisement( $this->order_values ) ) {
-				// Advertisement
-				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
+				/*
+				 * Advertisement.
+				 *
+				 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2381
+				 */
 				$url = add_query_arg(
 					array(
 						'pid' => $this->order_values['txn_id'],
@@ -206,12 +245,15 @@ class PaymentData extends Pay_PaymentData {
 					CP_ADD_NEW_CONFIRM_URL
 				);
 			} else {
-				// Advertisement package
-				// @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2409
+				/*
+				 * Advertisement package.
+				 *
+				 * @link https://bitbucket.org/Pronamic/classipress/src/bc1334736c6e/includes/theme-functions.php?at=3.2.1#cl-2409
+				 */
 				$url = add_query_arg(
 					array(
 						'oid' => $this->order_values['txn_id'],
-						// In some ClassiPress installation the 'wp_cp_order_info' table doesn't have an 'user_id' column
+						// In some ClassiPress installation the 'wp_cp_order_info' table doesn't have an 'user_id' column.
 						'uid' => ( isset( $this->order_values['user_id'] ) ? $this->order_values['user_id'] : false ),
 					),
 					CP_MEMBERSHIP_PURCHASE_CONFIRM_URL
@@ -222,18 +264,38 @@ class PaymentData extends Pay_PaymentData {
 		return $url;
 	}
 
+	/**
+	 * Get normal return URL.
+	 *
+	 * @return string
+	 */
 	public function get_normal_return_url() {
 		return $this->get_notify_url();
 	}
 
+	/**
+	 * Get cancel URL.
+	 *
+	 * @return string
+	 */
 	public function get_cancel_url() {
 		return $this->get_notify_url();
 	}
 
+	/**
+	 * Get success URL.
+	 *
+	 * @return string
+	 */
 	public function get_success_url() {
 		return $this->get_return_url();
 	}
 
+	/**
+	 * Get error URL.
+	 *
+	 * @return string
+	 */
 	public function get_error_url() {
 		return $this->get_notify_url();
 	}

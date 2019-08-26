@@ -11,7 +11,7 @@ use Pronamic\WordPress\Pay\Util;
 /**
  * Title: ClassiPress iDEAL Add-On
  * Description:
- * Copyright: Copyright (c) 2005 - 2018
+ * Copyright: 2005-2019 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
@@ -146,8 +146,9 @@ class Extension {
 		global $app_abbr;
 
 		if ( 'yes' === get_option( $app_abbr . '_pronamic_ideal_enable' ) ) {
-			printf( // WPCS: xss ok.
+			printf(
 				'<option value="pronamic_ideal">%s</option>',
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				PaymentMethods::get_name( PaymentMethods::IDEAL )
 			);
 		}
@@ -183,18 +184,18 @@ class Extension {
 	/**
 	 * Process gateway
 	 *
-	 * @param $order_values
+	 * @param array $order_values Order.
 	 */
 	public static function gateway_process( $order_values ) {
-		// If gateway wasn't selected then immediately return
+		// If gateway wasn't selected then immediately return.
 		if ( 'pronamic_ideal' !== $order_values['cp_payment_method'] ) {
 			return;
 		}
 
-		// Add transaction entry
+		// Add transaction entry.
 		$transaction_id = ClassiPress::add_transaction_entry( $order_values );
 
-		// Handle gateway
+		// Handle gateway.
 		$gateway = self::get_config_id();
 
 		if ( ! $gateway ) {
@@ -203,19 +204,23 @@ class Extension {
 
 		$data = new PaymentData( $order_values );
 
-		// Hide the checkout page container HTML element
+		// Hide the checkout page container HTML element.
 		echo '<style type="text/css">.thankyou center { display: none; }</style>';
 
 		?>
 		<form class="form_step" method="post" action="">
 			<?php
 
-			echo Util::html_hidden_fields( array( // WPCS: xss ok.
-				'cp_payment_method' => 'pronamic_ideal',
-				'oid'               => $data->get_order_id(),
-			) );
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo Util::html_hidden_fields(
+				array(
+					'cp_payment_method' => 'pronamic_ideal',
+					'oid'               => $data->get_order_id(),
+				)
+			);
 
-			echo $gateway->get_input_html(); // WPCS: xss ok.
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo $gateway->get_input_html();
 
 			?>
 
@@ -238,8 +243,8 @@ class Extension {
 	 *
 	 * @since unreleased
 	 *
-	 * @param string  $url
-	 * @param Payment $payment
+	 * @param string  $url     Redirect URL.
+	 * @param Payment $payment Payment.
 	 *
 	 * @return string
 	 */
@@ -275,7 +280,7 @@ class Extension {
 	/**
 	 * Update lead status of the specified payment
 	 *
-	 * @param Payment $payment
+	 * @param Payment $payment Payment.
 	 */
 	public static function update_status( Payment $payment ) {
 		$id = $payment->get_source_id();
@@ -307,10 +312,10 @@ class Extension {
 	}
 
 	/**
-	 * Source column
+	 * Source column.
 	 *
-	 * @param         $text
-	 * @param Payment $payment
+	 * @param string  $text    Source text.
+	 * @param Payment $payment Payment.
 	 *
 	 * @return string
 	 */
@@ -330,10 +335,10 @@ class Extension {
 	/**
 	 * Source description.
 	 *
-	 * @param         $description
-	 * @param Payment $payment
+	 * @param string  $description Source description.
+	 * @param Payment $payment     Payment.
 	 *
-	 * @return string|void
+	 * @return string
 	 */
 	public static function source_description( $description, Payment $payment ) {
 		return __( 'ClassiPress Order', 'pronamic_ideal' );
@@ -342,8 +347,8 @@ class Extension {
 	/**
 	 * Source URL.
 	 *
-	 * @param         $url
-	 * @param Payment $payment
+	 * @param string  $url     Source URL.
+	 * @param Payment $payment Payment.
 	 *
 	 * @return string
 	 */
