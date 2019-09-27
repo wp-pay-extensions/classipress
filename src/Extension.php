@@ -3,7 +3,7 @@
 namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
 
 use Pronamic\WordPress\Pay\Core\PaymentMethods;
-use Pronamic\WordPress\Pay\Core\Statuses;
+use Pronamic\WordPress\Pay\Payments\PaymentStatus;
 use Pronamic\WordPress\Pay\Payments\Payment;
 use Pronamic\WordPress\Pay\Plugin;
 use Pronamic\WordPress\Pay\Util;
@@ -258,17 +258,17 @@ class Extension {
 		$url = $data->get_normal_return_url();
 
 		switch ( $payment->status ) {
-			case Statuses::CANCELLED:
+			case PaymentStatus::CANCELLED:
 				break;
-			case Statuses::EXPIRED:
+			case PaymentStatus::EXPIRED:
 				break;
-			case Statuses::FAILURE:
+			case PaymentStatus::FAILURE:
 				break;
-			case Statuses::SUCCESS:
+			case PaymentStatus::SUCCESS:
 				$url = $data->get_success_url();
 
 				break;
-			case Statuses::OPEN:
+			case PaymentStatus::OPEN:
 				break;
 			default:
 				break;
@@ -288,13 +288,13 @@ class Extension {
 		$order = ClassiPress::get_order_by_id( $id );
 
 		switch ( $payment->status ) {
-			case Statuses::CANCELLED:
+			case PaymentStatus::CANCELLED:
 				break;
-			case Statuses::EXPIRED:
+			case PaymentStatus::EXPIRED:
 				break;
-			case Statuses::FAILURE:
+			case PaymentStatus::FAILURE:
 				break;
-			case Statuses::SUCCESS:
+			case PaymentStatus::SUCCESS:
 				if ( ! Order::is_completed( $order ) ) {
 					ClassiPress::process_ad_order( $id );
 
@@ -304,7 +304,7 @@ class Extension {
 				}
 
 				break;
-			case Statuses::OPEN:
+			case PaymentStatus::OPEN:
 				break;
 			default:
 				break;
