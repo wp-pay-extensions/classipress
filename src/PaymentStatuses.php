@@ -5,7 +5,7 @@ namespace Pronamic\WordPress\Pay\Extensions\ClassiPress;
 /**
  * Title: Payment statuses
  * Description:
- * Copyright: 2005-2019 Pronamic
+ * Copyright: 2005-2020 Pronamic
  * Company: Pronamic
  *
  * @author  Remco Tolsma
