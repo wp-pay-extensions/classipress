@@ -116,20 +116,24 @@ class Extension {
 	/**
 	 * Get config id.
 	 *
-	 * @return mixed
+	 * @return int|null
 	 */
 	private static function get_config_id() {
 		global $app_abbr;
 
 		$config_id = get_option( $app_abbr . '_pronamic_ideal_config_id' );
 
-		return $config_id;
+		if ( false === $config_id ) {
+			return null;
+		}
+
+		return (int) $config_id;
 	}
 
 	/**
 	 * Get gateway.
 	 *
-	 * @return \Pronamic\WordPress\Pay\Core\Gateway
+	 * @return \Pronamic\WordPress\Pay\Core\Gateway|null
 	 */
 	private static function get_gateway() {
 		$config_id = self::get_config_id();
@@ -164,7 +168,7 @@ class Extension {
 
 		$gateway = self::get_gateway();
 
-		if ( ! $gateway ) {
+		if ( null === $gateway ) {
 			return;
 		}
 
@@ -196,9 +200,9 @@ class Extension {
 		$transaction_id = ClassiPress::add_transaction_entry( $order_values );
 
 		// Handle gateway.
-		$gateway = self::get_config_id();
+		$gateway = self::get_gateway();
 
-		if ( ! $gateway ) {
+		if ( null === $gateway ) {
 			return;
 		}
 
@@ -258,18 +262,14 @@ class Extension {
 		$url = $data->get_normal_return_url();
 
 		switch ( $payment->status ) {
-			case PaymentStatus::CANCELLED:
-				break;
-			case PaymentStatus::EXPIRED:
-				break;
-			case PaymentStatus::FAILURE:
-				break;
 			case PaymentStatus::SUCCESS:
 				$url = $data->get_success_url();
 
 				break;
+			case PaymentStatus::CANCELLED:
+			case PaymentStatus::EXPIRED:
+			case PaymentStatus::FAILURE:
 			case PaymentStatus::OPEN:
-				break;
 			default:
 				break;
 		}
@@ -288,12 +288,6 @@ class Extension {
 		$order = ClassiPress::get_order_by_id( $id );
 
 		switch ( $payment->status ) {
-			case PaymentStatus::CANCELLED:
-				break;
-			case PaymentStatus::EXPIRED:
-				break;
-			case PaymentStatus::FAILURE:
-				break;
 			case PaymentStatus::SUCCESS:
 				if ( ! Order::is_completed( $order ) ) {
 					ClassiPress::process_ad_order( $id );
@@ -304,8 +298,10 @@ class Extension {
 				}
 
 				break;
+			case PaymentStatus::CANCELLED:
+			case PaymentStatus::EXPIRED:
+			case PaymentStatus::FAILURE:
 			case PaymentStatus::OPEN:
-				break;
 			default:
 				break;
 		}
