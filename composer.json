@@ -1,7 +1,7 @@
 {
 	"name": "wp-pay-extensions/classipress",
-	"description": "ClassiPress driver for the WordPress payment processing library.",
-	"keywords": ["wordpress", "wp", "pay", "classipress", "extension", "pronamic"],
+	"description": "✗ [DEPRECATED] ClassiPress driver for the WordPress payment processing library.",
+	"keywords": ["wordpress", "wp", "pay", "classipress", "extension", "pronamic", "deprecated"],
 	"homepage": "http://www.wp-pay.org/extensions/classipress/",
 	"license": "GPL-3.0-or-later",
 	"authors": [

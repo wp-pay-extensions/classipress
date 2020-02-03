@@ -1,4 +1,4 @@
-# WordPress Pay Extension: ClassiPress
+# [DEPRECATED] WordPress Pay Extension: ClassiPress
 
 **ClassiPress driver for the WordPress payment processing library.**
 
